@@ -10,6 +10,7 @@ namespace PokemonReviewApp.Data
 		{
 		}
 
+
 		public DbSet<Pokemon>           Pokemons            { get; set; }
 		public DbSet<Owner>             Owners              { get; set; }
         public DbSet<Country>           Countries           { get; set; }
@@ -18,6 +19,7 @@ namespace PokemonReviewApp.Data
         public DbSet<Reviewer>          Reviewers           { get; set; }
         public DbSet<PokemonOwner>      PokemonOwners       { get; set; }
         public DbSet<PokemonCategory>   PokemonCategories   { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
