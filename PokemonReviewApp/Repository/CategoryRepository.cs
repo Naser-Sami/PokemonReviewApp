@@ -16,7 +16,7 @@ namespace PokemonReviewApp.Repository
 
         public bool CategoryExists(int id)
             => _context.Categories.Any(c => c.Id == id);
-        
+
         public ICollection<Category> GetCategories()
             => _context.Categories.OrderBy(c => c.Name).ToList();
 
@@ -28,6 +28,18 @@ namespace PokemonReviewApp.Repository
             .Where(e => e.CategoryId == categoryId)
             .Select(c => c.Pokemon)
             .ToList();
+
+        public bool CreateCategory(Category category)
+        {
+            _context.Add(category);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+        }
     }
 }
 
