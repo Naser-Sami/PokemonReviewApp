@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
+using PokemonReviewApp.Models;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -61,6 +62,41 @@ namespace PokemonReviewApp.Controllers
 
 			return Ok(_mapper.Map<List<PokemonDto>>
 				(_ownerRepository.GetPokemonByOwner(ownerId)));
+        }
+
+        [HttpPost]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+		public IActionResult OwnerCreate([FromBody] OwnerDto ownerCreate)
+		{
+			if (ownerCreate == null)
+				return BadRequest(ModelState);
+
+			var owner = _ownerRepository.GetOwners()
+				.Where(
+				o =>
+					o.FirstName.Trim().ToLower() == ownerCreate.FirstName.Trim().ToLower() &&
+					o.LastName.Trim().ToLower() == ownerCreate.LastName.Trim().ToLower()
+				).FirstOrDefault();
+
+			if (owner != null)
+			{
+                ModelState.AddModelError("", "Owner already exists.");
+                return StatusCode(422, ModelState);
+            }
+
+			if (!ModelState.IsValid)
+				return BadRequest();
+
+			var ownerMap = _mapper.Map<Owner>(ownerCreate);
+
+			if (!_ownerRepository.OwnerCreate(ownerMap))
+			{
+                ModelState.AddModelError("", "Something went wrong while saving");
+                return StatusCode(500, ModelState);
+            }
+
+            return Ok("Successfully created.");
         }
     }
 }

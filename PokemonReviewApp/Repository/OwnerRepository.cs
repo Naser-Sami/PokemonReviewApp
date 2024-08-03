@@ -41,6 +41,18 @@ namespace PokemonReviewApp.Repository
         public bool PokemonExists(int pokeId)
             => _context.Pokemons
             .Any(p => p.Id == pokeId);
+
+        public bool OwnerCreate(Owner owner)
+        {
+            _context.Add(owner);
+            return Save();
+        }
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0;
+        }
     }
 }
 
