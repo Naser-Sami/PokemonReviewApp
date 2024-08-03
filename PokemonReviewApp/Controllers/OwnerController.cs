@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dto;
 using PokemonReviewApp.Interfaces;
 using PokemonReviewApp.Models;
+using PokemonReviewApp.Repository;
 
 namespace PokemonReviewApp.Controllers
 {
@@ -12,12 +13,15 @@ namespace PokemonReviewApp.Controllers
 	public class OwnerController : Controller
 	{
 		private readonly IOwnerRepository _ownerRepository;
+		private readonly ICountryRepository _countryRepository;
 		private readonly IMapper _mapper;
 
-		public OwnerController(IOwnerRepository ownerRepository, IMapper mapper)
+		public OwnerController(
+			IOwnerRepository ownerRepository, ICountryRepository countryRepository, IMapper mapper)
 		{
 			_ownerRepository = ownerRepository;
-			_mapper = mapper;
+			_countryRepository = countryRepository;
+            _mapper = mapper;
 		}
 
 		[HttpGet()]
@@ -67,7 +71,7 @@ namespace PokemonReviewApp.Controllers
         [HttpPost]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-		public IActionResult OwnerCreate([FromBody] OwnerDto ownerCreate)
+		public IActionResult OwnerCreate([FromForm] int countryId, [FromBody] OwnerDto ownerCreate)
 		{
 			if (ownerCreate == null)
 				return BadRequest(ModelState);
@@ -89,6 +93,12 @@ namespace PokemonReviewApp.Controllers
 				return BadRequest();
 
 			var ownerMap = _mapper.Map<Owner>(ownerCreate);
+
+			// what is the country of the owner else it will add empty country or throw an error
+			if (_countryRepository.GetCountry(countryId) != null)
+			{
+                ownerMap.Country = _countryRepository.GetCountry(countryId)!;
+            }
 
 			if (!_ownerRepository.OwnerCreate(ownerMap))
 			{
