@@ -30,6 +30,15 @@ namespace PokemonReviewApp.Repository
 
         public bool ReviewersExists(int reviewerId)
             => _context.Reviewers.Any(r => r.Id == reviewerId);
+
+        public bool CreateReviewer(Reviewer reviewer)
+        {
+            _context.Add(reviewer);
+            return Save();
+        }
+
+        public bool Save()
+            => _context.SaveChanges() > 0;
     }
 }
 
