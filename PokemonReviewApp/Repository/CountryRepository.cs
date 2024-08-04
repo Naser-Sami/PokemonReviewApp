@@ -44,9 +44,21 @@ namespace PokemonReviewApp.Repository
             .Where(o => o.Country.Id == countryId)
             .ToList();
 
-        public bool CreateCCountry(Country country)
+        public bool CreateCountry(Country country)
         {
             _context.Add(country);
+            return Save();
+        }
+
+        public bool UpdateCountry(Country country)
+        {
+            _context.Update(country);
+            return Save();
+        }
+
+        public bool DeleteCountry(Country country)
+        {
+            _context.Remove(country);
             return Save();
         }
 
